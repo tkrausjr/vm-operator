@@ -1,11 +1,20 @@
 # vm-operator
 We will be deploying the Spring Petclinic application to demonstrate how the VM Operator Service or VM Service works. To do this we will deploy a Virtual Machine object for the mysql component of the application in TKG in the same vSphere Namespace where we have a Kubernetes Cluster. We will then deploy the Front End components as Kubernetes deployments and they will connect back to the mysql Database to store and retrieve data.
 
+## Pre-requisites
+* A vSphere Content Library
+* A TKGs Supervisor Cluster with a petclinic-app vSphere Namespace
+* Storage Policies and VM Classes configured on the vSphere Namespace
+* An ubuntu or CentOs Image OVA uploaded to the Content Library. This will serve as the starting point for our Virtual Machine Object that gets created and managed by the Supervisor Cluster.
+
+
 ## Create a vSphere Namespace for your Application
 * Use the vSphere UI to create a Namespace called "petclinic-app"
 
 ## Deploy Centos Mysql VM and Virtual Machine Service 
 The VM Service leverage the same Kubernetes API to deploy and manage virtual machines that you use to deploy Kubernetes clusters, pods and services. This allows developers to manage virtual machines for application components that are not containerized. 
+
+NOTE: If you want to make configuration changes to the MYSql Instance and configuration, update/change the ./vm-operator/mysql-vmservice/mysql-vmsvc-cloudinit.yaml file and then Base64 Encode it and put the Base64 encoded String into the mysql-vmsvc-vm-nsx.yaml file. 
 
 * git clone https://github.com/tkrausjr/vm-operator.git
 * cd vm-operator
