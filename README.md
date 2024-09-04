@@ -1,5 +1,5 @@
 # vm-operator
-We will be deploying the Spring Petclinic application to demonstrate how the VM Operator Service or VM Service works.
+We will be deploying the Spring Petclinic application to demonstrate how the VM Operator Service or VM Service works. To do this we will deploy a Virtual Machine object for the mysql component of the application in TKG in the same vSphere Namespace where we have a Kubernetes Cluster. We will then deploy the Front End components as Kubernetes deployments and they will connect back to the mysql Database to store and retrieve data.
 
 ## Create a vSphere Namespace for your Application
 * Use the vSphere UI to create a Namespace called "petclinic-app"
