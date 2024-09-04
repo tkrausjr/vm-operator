@@ -1,0 +1,5 @@
+# You need to update the vmservice Image identifier as per instructions below in release notes
+# https://docs.vmware.com/en/VMware-vSphere/8.0/rn/vmware-vsphere-with-tanzu-80-release-notes/index.html#Release-Note-Item-46959:~:text=Changes%20in%20the%20VM%20image%20name%20format%20in%20vSphere%208.0%20U2%20might%20cause%20problems%20when%20old%20VM%20image%20names%20are%20used
+# Pod Security now requires labeling the Namespaces for things to work.
+#
+#

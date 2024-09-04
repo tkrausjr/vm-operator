@@ -1,0 +1,38 @@
+#cloud-config
+chpasswd: # Username / Password combination if ssh_pwauth set to true.
+    list: |
+      centos:password   
+    expire: false
+groups:
+  - docker
+users:
+  - default
+  - name: centos
+    ssh-authorized-keys:
+      - ssh-rsa AAAAB3Nz...m50YwPyUFoUAUOXaqM6J8sXJd1THHFXBd/9jmnI60abFj50hqNuk62cN9kHW55HSO/L/Llz/PZyuk0wTbfqzc8BRA3Z0YiLo+I/LIc0= nverma@bastion0
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    groups: sudo, docker
+    shell: /bin/bash
+# Enable password based authentication if needed
+ssh_pwauth: True
+network:
+  version: 2
+  ethernets:
+      ens192:
+          dhcp4: true
+package_update: true
+packages:
+  - mysql-server
+  - net-tools
+runcmd:
+  - sudo timedatectl set-timezone UTC
+  - systemctl enable mysqld
+  - systemctl start mysqld
+  - sudo mysql -e "CREATE DATABASE service_instance_db;"
+  - sudo mysql -e "CREATE USER 'petclinic'@'%' IDENTIFIED BY 'password';"
+  - sudo mysql -e "GRANT ALL ON service_instance_db.* TO 'petclinic'@'%';"
+  - sudo mysql -e "FLUSH PRIVILEGES;"
+  - sed -i '$abind-address=0.0.0.0' /etc/my.cnf.d/mysql-server.cnf
+  - systemctl restart mysqld
+  - firewall-offline-cmd --add-port=3306/tcp
+  - firewall-cmd --reload

@@ -1,0 +1,51 @@
+---
+apiVersion: vmoperator.vmware.com/v1alpha1
+kind: VirtualMachine
+metadata:
+  labels:
+    vm-selector: mysql-centosvm-2
+  name: mysql-centosvm-2
+  namespace: petclinic-app
+spec:
+  imageName: centos-stream-8-vmservice-v1alpha1-1638306496810
+  className: best-effort-small
+  powerState: poweredOn
+  storageClass: nfs-datastores
+  networkInterfaces:
+  - networkType: nsx-t  # nsx-t or vsphere-distributed. 
+    networkName:    # Leave blank if nsx-t. For vsphere-distributed you can obtain this information using the 'kubectl get network' command.
+  readinessProbe:
+    tcpSocket:
+      port: 22
+  vmMetadata:
+    configMapName: centos-cloudinit
+    transport: OvfEnv
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: centos-cloudinit
+    namespace: petclinic-app
+data:
+  user-data: I2Nsb3VkLWNvbmZpZwpjaHBhc3N3ZDogIyBVc2VybmFtZSAvIFBhc3N3b3JkIGNvbWJpbmF0aW9uIGlmIHNzaF9wd2F1dGggc2V0IHRvIHRydWUuCiAgICBsaXN0OiB8CiAgICAgIGNlbnRvczpwYXNzd29yZCAgIAogICAgZXhwaXJlOiBmYWxzZQpncm91cHM6CiAgLSBkb2NrZXIKdXNlcnM6CiAgLSBkZWZhdWx0CiAgLSBuYW1lOiBjZW50b3MKICAgIHNzaC1hdXRob3JpemVkLWtleXM6CiAgICAgIC0gc3NoLXJzYSBBQUFBQjNOei4uLm01MFl3UHlVRm9VQVVPWGFxTTZKOHNYSmQxVEhIRlhCZC85am1uSTYwYWJGajUwaHFOdWs2MmNOOWtIVzU1SFNPL0wvTGx6L1BaeXVrMHdUYmZxemM4QlJBM1owWWlMbytJL0xJYzA9IG52ZXJtYUBiYXN0aW9uMAogICAgc3VkbzogQUxMPShBTEwpIE5PUEFTU1dEOkFMTAogICAgZ3JvdXBzOiBzdWRvLCBkb2NrZXIKICAgIHNoZWxsOiAvYmluL2Jhc2gKIyBFbmFibGUgcGFzc3dvcmQgYmFzZWQgYXV0aGVudGljYXRpb24gaWYgbmVlZGVkCnNzaF9wd2F1dGg6IFRydWUKbmV0d29yazoKICB2ZXJzaW9uOiAyCiAgZXRoZXJuZXRzOgogICAgICBlbnMxOTI6CiAgICAgICAgICBkaGNwNDogdHJ1ZQpwYWNrYWdlX3VwZGF0ZTogdHJ1ZQpwYWNrYWdlczoKICAtIG15c3FsLXNlcnZlcgogIC0gbmV0LXRvb2xzCnJ1bmNtZDoKICAtIHN1ZG8gdGltZWRhdGVjdGwgc2V0LXRpbWV6b25lIFVUQwogIC0gc3lzdGVtY3RsIGVuYWJsZSBteXNxbGQKICAtIHN5c3RlbWN0bCBzdGFydCBteXNxbGQKICAtIHN1ZG8gbXlzcWwgLWUgIkNSRUFURSBEQVRBQkFTRSBzZXJ2aWNlX2luc3RhbmNlX2RiOyIKICAtIHN1ZG8gbXlzcWwgLWUgIkNSRUFURSBVU0VSICdwZXRjbGluaWMnQCclJyBJREVOVElGSUVEIEJZICdwYXNzd29yZCc7IgogIC0gc3VkbyBteXNxbCAtZSAiR1JBTlQgQUxMIE9OIHNlcnZpY2VfaW5zdGFuY2VfZGIuKiBUTyAncGV0Y2xpbmljJ0AnJSc7IgogIC0gc3VkbyBteXNxbCAtZSAiRkxVU0ggUFJJVklMRUdFUzsiCiAgLSBzZWQgLWkgJyRhYmluZC1hZGRyZXNzPTAuMC4wLjAnIC9ldGMvbXkuY25mLmQvbXlzcWwtc2VydmVyLmNuZgogIC0gc3lzdGVtY3RsIHJlc3RhcnQgbXlzcWxkCiAgLSBmaXJld2FsbC1vZmZsaW5lLWNtZCAtLWFkZC1wb3J0PTMzMDYvdGNwCiAgLSBmaXJld2FsbC1jbWQgLS1yZWxvYWQK  
+  hostname: centos-mysql
+---
+apiVersion: vmoperator.vmware.com/v1alpha1
+kind: VirtualMachineService
+metadata:
+  name: mysql-vmservices
+  namespace: petclinic-app
+spec:
+  ports:
+  - name: ssh
+    port: 22
+    protocol: TCP
+    targetPort: 22
+  - name: mwsql
+    port: 3306
+    protocol: TCP
+    targetPort: 3306
+  selector:
+    vm-selector: mysql-centosvm-2
+  type: LoadBalancer
+  loadBalancerIP: 192.168.199.100
