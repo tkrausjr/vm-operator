@@ -34,6 +34,6 @@ is also running in the  petclinic-app vSphere Namespace.
 * Obtain the EXTERNAL-IP of the Spring Petclinic Frontend Gateway and copy this IP address: 
     * kubectl get svc -n spring-petclinic
 * In a Web Browser, navigate to the EXTERNAL-IP from the previous command:
-    * http://<EXTERNAL-IP>
+    * http://\<EXTERNAL-IP\>
     * IE. http://192.168.130.15
     * You should see the "Welcome to Petclinic" Web Page
